@@ -81,9 +81,42 @@ class _HomeState extends State<Home> {
                 icon: Icons.delete,
 
                 onTap: (){
-                  setState(() {
-                    notes.removeAt(i);
-                  });
+                  showDialog(
+                    context: context,
+                    builder:(context){
+                      return AlertDialog(
+                        content: Text(
+                          'Voulez-vous supprimer cette note ?',
+                          style:TextStyle(fontSize: 24),
+                        ),
+
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              'Annuler',
+                              style: TextStyle(fontSize: 24,),
+                            ),
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                          ),
+
+                          FlatButton(
+                            child: Text(
+                              'Supprimer',
+                              style:TextStyle(fontSize: 24),),
+                            onPressed: (){
+                              setState(() {
+                                notes.removeAt(i);
+                                Navigator.pop(context);
+                              });;
+                            },
+                          )
+
+                        ],
+                      );
+                    }
+                  );
                 },
               )
             ],
