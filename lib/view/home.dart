@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note/note.dart';
+import 'package:note/model/note.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Home extends StatefulWidget {
@@ -11,8 +11,10 @@ class _HomeState extends State<Home> {
   List<Note> notes = [
     Note(title: 'Courses', content: 'Farine, oeufs, dentifrice, savon'),
     Note(title: 'TAF', content: 'Recherches algo num, electronique des compo, St 21h'),
-
   ];
+
+  final SlidableController slideController = SlidableController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,10 +28,11 @@ class _HomeState extends State<Home> {
       body: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         itemCount: notes.length,
-        separatorBuilder: (context,i) =>SizedBox(height: 10),
+        separatorBuilder: (context,i) =>Divider(),
 
         itemBuilder: (context, i) {
           return Slidable(
+            controller: slideController,
             actionPane: SlidableScrollActionPane(),
             actionExtentRatio: 0.25,
 

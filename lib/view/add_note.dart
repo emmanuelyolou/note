@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note/note.dart';
+import 'package:note/model/note.dart';
 
 class AddNote extends StatefulWidget {
   @override
@@ -47,30 +47,32 @@ class _AddNoteState extends State<AddNote> {
         title: Text('Note'),
           centerTitle: true,
           actions: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.save, size: 30, color: Colors.blue[200],),
-              label: Text('',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.purpleAccent[700]
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+              child: FlatButton(
+                child: Text('Save',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                  ),
                 ),
+
+                onPressed: () {
+                  if (_titleController.text.trim() != '' || _contentController.text.trim() != '')
+                  {
+                    Navigator.pop(context, Note(
+                        title: _titleController.text,
+                        content: _contentController.text)
+                    );
+                  }
+                  else
+                  {
+                    Navigator.pop(context);
+                  }
+
+                }
               ),
-
-              onPressed: () {
-                if (_titleController.text.trim() != '' || _contentController.text.trim() != '')
-                {
-                  Navigator.pop(context, Note(
-                      title: _titleController.text,
-                      content: _contentController.text)
-                  );
-                }
-                else
-                {
-                  Navigator.pop(context);
-                }
-
-              }
             ),
           ],
       ),
