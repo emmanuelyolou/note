@@ -3,32 +3,39 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DbProvider{
-  Database db;
+  static Database db;
 
-  DbProvider(){
-    initDatabase();
+  DbProvider();
+
+  Future<int> insertNote(Note note) async{
+    return db.rawInsert("""
+      INSERT INTO note(title, content) VALUES (?, ?)
+      """,
+      [note.title, note.content]);
   }
 
-  Future<void> insertNote(Note note) async{
-    db.rawInsert("""
-      INSERT INTO note(title, content)
-      VALUES ("${note.title}, ${note.content}") 
-    """);
+  Future<void> updateNote(Note note) async{
+    db.rawUpdate("""
+      UPDATE note 
+      SET title = ?, content = ? WHERE id = ?""",
+      [note.title, note.content, note.id]);
   }
 
-  Future<List<Note>>getAllNotes() async {
+
+  Future<List<Note>> getAllNotes() async {
     List<Map> result = await db.query('note');
 
     return result.map((note) => Note(
       title: note['title'],
-      content: note['content']
-    ));
+      content: note['content'],
+      id: note['id']
+    )).toList();
   }
 
-  Future<void> deleteNote(int id) async {
+  Future<void> deleteNote(Note note) async {
     db.rawDelete("""
       DELETE FROM note 
-      WHERE id = $id 
+      WHERE id = ${note.id} 
     """);
   }
 
@@ -39,7 +46,7 @@ class DbProvider{
       onCreate: (db, version) async {
        await db.execute("""
         CREATE TABLE note (
-          id_note INT PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           title VARCHAR(50) DEFAULT NULL,
           content TEXT DEFAULT NULL
         )

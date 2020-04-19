@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note/model/note.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:note/model/database.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -8,27 +9,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Note> notes = [
-    Note(title: 'Courses', content: 'Farine, oeufs, dentifrice, savon'),
-    Note(title: 'TAF', content: 'Recherches algo num, electronique des compo, St 21h'),
-  ];
 
+  DbProvider dbProvider = DbProvider();
+  Map data = {};
+  List<Note> notes;
   final SlidableController slideController = SlidableController();
 
   @override
   Widget build(BuildContext context) {
+
+    if (data.isEmpty){
+      data = ModalRoute.of(context).settings.arguments;
+      notes = data["notes"];
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Notes'),
         centerTitle: true,
-
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
 
       body: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        padding: EdgeInsets.symmetric( vertical: 10),
         itemCount: notes.length,
-        separatorBuilder: (context,i) =>Divider(),
+        separatorBuilder: (context,i) =>Divider(height: 0.5,),
 
         itemBuilder: (context, i) {
           return Slidable(
@@ -37,7 +42,7 @@ class _HomeState extends State<Home> {
             actionExtentRatio: 0.25,
 
             child: Container(
-              color: Colors.white,
+              color: Colors.grey[100],
               height: 130,
               child: GestureDetector(
                 onTap: () async{
@@ -47,7 +52,17 @@ class _HomeState extends State<Home> {
                   });
 
                   if (response != null){
-                    notes[i] = response;
+                    //will search in the db for a note with the given id
+                    //and then update it with the response attributes
+                    int id = notes[i].id;
+                    response.id = id;
+                    await dbProvider.updateNote(response);
+
+                    setState(() {
+                      //We assign each value instead of replacing the note
+                      //so we don't loose the id
+                      notes[i] = response;
+                    });
                   }
                 },
 
@@ -108,11 +123,12 @@ class _HomeState extends State<Home> {
                             child: Text(
                               'Supprimer',
                               style:TextStyle(fontSize: 24),),
-                            onPressed: (){
+                            onPressed: () async{
+                              await dbProvider.deleteNote(notes[i]);
                               setState(() {
                                 notes.removeAt(i);
                                 Navigator.pop(context);
-                              });;
+                              });
                             },
                           )
 
@@ -132,6 +148,8 @@ class _HomeState extends State<Home> {
           dynamic result = await Navigator.pushNamed(context, '/add_note');
 
           if(result != null){
+            int id = await dbProvider.insertNote(result);
+            result.id = id;
             setState(() {
               notes.add(result);
             });
