@@ -21,26 +21,23 @@ class _LoadingState extends State<Loading> {
     await dbProvider.initDatabase();
     List<Note> notes = await dbProvider.getAllNotes();
 
-    Navigator.pushReplacementNamed(
-      context, '/home',
-      arguments: {
-      'notes' : notes,
+    //Delays the navigation so that the screen loads at least
+    //1 sec
+    Future.delayed(Duration(milliseconds: 500,), (){
+      Navigator.pushReplacementNamed(
+        context, '/home',
+        arguments: {
+        'notes' : notes,
       });
-  }
+    });}
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[800],
       child: SpinKitThreeBounce(
-        itemBuilder: (BuildContext context, int index) {
-          return DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-
-            ),
-          );
-        },
+        color: Colors.blue[800],
+        size: 40,
       ),
     );
   }

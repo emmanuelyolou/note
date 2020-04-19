@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:note/model/note.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:note/model/database.dart';
+import 'DeleteConfirmationDialog.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -10,10 +11,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final SlidableController slideController = SlidableController();
   DbProvider dbProvider = DbProvider();
   Map data = {};
   List<Note> notes;
-  final SlidableController slideController = SlidableController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,103 +44,57 @@ class _HomeState extends State<Home> {
             actionExtentRatio: 0.25,
 
             child: Container(
+              padding: EdgeInsets.fromLTRB(10, 7, 35, 7),
               color: Colors.grey[100],
-              height: 130,
+              height: 110,
               child: GestureDetector(
-                onTap: () async{
-                  dynamic response = await Navigator.pushNamed(context, '/add_note', arguments: {
-                    "title": notes[i].title,
-                    'content': notes[i].content
-                  });
 
-                  if (response != null){
-                    //will search in the db for a note with the given id
-                    //and then update it with the response attributes
-                    int id = notes[i].id;
-                    response.id = id;
-                    await dbProvider.updateNote(response);
-
-                    setState(() {
-                      //We assign each value instead of replacing the note
-                      //so we don't loose the id
-                      notes[i] = response;
-                    });
-                  }
-                },
+                //handles navigation to the add_note screen and
+                //update in the db and the notes list
+                onTap: () => modifyNote(i),
 
                 child: ListTile(
                   title: Text(
                     notes[i].title,
                     style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.grey[800]),
+                        fontSize: 17,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.bold),
                         maxLines: 1,
                   ),
 
                   subtitle: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: Text(
                       notes[i].content,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                       style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.grey[700]),
+                          fontSize: 15,
+                          color: Colors.grey[800]),
                     ),
                   ),
                 ),
               ),
             ),
 
-            //delete option beware the Slidable
             secondaryActions: <Widget>[
               IconSlideAction(
                 caption: 'delete',
                 color: Colors.redAccent,
                 icon: Icons.delete,
 
-                onTap: (){
-                  showDialog(
-                    context: context,
-                    builder:(context){
-                      return AlertDialog(
-                        content: Text(
-                          'Voulez-vous supprimer cette note ?',
-                          style:TextStyle(fontSize: 24),
-                        ),
-
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text(
-                              'Annuler',
-                              style: TextStyle(fontSize: 24,),
-                            ),
-                            onPressed: (){
-                              Navigator.pop(context);
-                            },
-                          ),
-
-                          FlatButton(
-                            child: Text(
-                              'Supprimer',
-                              style:TextStyle(fontSize: 24),),
-                            onPressed: () async{
-                              await dbProvider.deleteNote(notes[i]);
-                              setState(() {
-                                notes.removeAt(i);
-                                Navigator.pop(context);
-                              });
-                            },
-                          )
-
-                        ],
-                      );
-                    }
-                  );
-                },
+                onTap: ()=> showDialog(
+                  context: context,
+                  builder: (context)=> DeleteConfirmationDialog(
+                    deleteFunction: delete,
+                    indexToDelete: i,
+                  )
+                ),
               )
             ],
+
           );
       }
       ),
@@ -159,4 +115,37 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+
+  void modifyNote(index) async {
+    dynamic response = await Navigator.pushNamed(
+        context, '/add_note', arguments: {
+      "title": notes[index].title,
+      'content': notes[index].content
+    });
+
+    if (response != null) {
+      //will search in the db for a note with the given id
+      //and then update it with the response attributes
+      int id = notes[index].id;
+      response.id = id;
+      await dbProvider.updateNote(response);
+
+      setState(() {
+        //We assign each value instead of replacing the note
+        //so we don't loose the id
+        notes[index] = response;
+      });
+    }
+  }
+
+  delete(index) async{
+    await dbProvider.deleteNote(notes[index]);
+    setState(() {
+      notes.removeAt(index);
+      Navigator.pop(context);
+    });
+  }
+
+
 }
