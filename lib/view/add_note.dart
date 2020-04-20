@@ -43,7 +43,7 @@ class _AddNoteState extends State<AddNote> {
       backgroundColor: Colors.grey[200],
 
       appBar: AppBar(
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.brown[300],
         title: Text('Note'),
           centerTitle: true,
           actions: <Widget>[
@@ -83,7 +83,7 @@ class _AddNoteState extends State<AddNote> {
         child: Column(
           children: <Widget>[
             TextField(
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 22, color: Colors.grey[800]),
               controller: _titleController,
               decoration: InputDecoration(
               hintText: 'Title',
@@ -94,17 +94,27 @@ class _AddNoteState extends State<AddNote> {
 
             SizedBox(height: 10),
 
-            TextField(
-              style: TextStyle(fontSize: 25),
-              controller: _contentController,
-              focusNode: _notesFocusNode,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
+            GestureDetector(
+              onTap: (){
+                _notesFocusNode.requestFocus();
+              },
+              child: Container(
+                //arbitrary chosen to cover most smart phones height
+                height: 700,
 
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Notes',
-                hintStyle: TextStyle(fontSize: 25)
+                child: TextField(
+                  style: TextStyle(fontSize: 18, color: Colors.grey[800]),
+                  controller: _contentController,
+                  focusNode: _notesFocusNode,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Notes',
+                    hintStyle: TextStyle(fontSize: 22)
+                  ),
+                ),
               ),
             )
           ],

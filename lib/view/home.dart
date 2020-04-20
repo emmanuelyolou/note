@@ -3,6 +3,7 @@ import 'package:note/model/note.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:note/model/database.dart';
 import 'DeleteConfirmationDialog.dart';
+import 'package:flutter/services.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    changeStatusBarColor();
 
     if (data.isEmpty){
       data = ModalRoute.of(context).settings.arguments;
@@ -29,11 +31,11 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('Notes'),
         centerTitle: true,
+        backgroundColor: Colors.brown[300],
       ),
       backgroundColor: Colors.grey[200],
 
       body: ListView.separated(
-        padding: EdgeInsets.symmetric( vertical: 10),
         itemCount: notes.length,
         separatorBuilder: (context,i) =>Divider(height: 0.5,),
 
@@ -44,9 +46,9 @@ class _HomeState extends State<Home> {
             actionExtentRatio: 0.25,
 
             child: Container(
-              padding: EdgeInsets.fromLTRB(10, 7, 35, 7),
+              padding: EdgeInsets.fromLTRB(2, 5, 35, 5),
               color: Colors.grey[100],
-              height: 110,
+              height: 102,
               child: GestureDetector(
 
                 //handles navigation to the add_note screen and
@@ -72,7 +74,7 @@ class _HomeState extends State<Home> {
                       softWrap: false,
                       style: TextStyle(
                           fontSize: 15,
-                          color: Colors.grey[800]),
+                          color: Colors.grey[600]),
                     ),
                   ),
                 ),
@@ -111,6 +113,7 @@ class _HomeState extends State<Home> {
             });
           }
         },
+        backgroundColor: Colors.brown[300],
         child: Icon(Icons.add, size: 30,),
       ),
     );
@@ -118,6 +121,8 @@ class _HomeState extends State<Home> {
 
 
   void modifyNote(index) async {
+    changeStatusBarColor();
+
     dynamic response = await Navigator.pushNamed(
         context, '/add_note', arguments: {
       "title": notes[index].title,
@@ -147,5 +152,10 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void changeStatusBarColor(){
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.brown[400],
+    ));
+  }
 
 }
