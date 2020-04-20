@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
                         fontSize: 17,
                         color: Colors.grey[800],
                         fontWeight: FontWeight.bold),
-                        maxLines: 1,
+                    maxLines: 1,
                   ),
 
                   subtitle: Padding(
@@ -83,23 +83,26 @@ class _HomeState extends State<Home> {
 
             secondaryActions: <Widget>[
               IconSlideAction(
-                caption: 'delete',
-                color: Colors.redAccent,
-                icon: Icons.delete,
+                  caption: 'delete',
+                  color: Colors.redAccent,
+                  icon: Icons.delete,
 
-                onTap: ()=> showDialog(
-                  context: context,
-                  builder: (context)=> DeleteConfirmationDialog(
-                    deleteFunction: delete,
-                    indexToDelete: i,
-                  )
-                ),
-              )
+                  onTap: () {
+                    //instead of simply using showDialog, for the beauty
+                    Navigator.of(context).push(PageRouteBuilder(
+                      opaque: false,
+                        barrierColor: Colors.black.withOpacity(0.1),
+                        pageBuilder: (context, _, ___) =>
+                            DeleteConfirmationDialog(
+                              deleteFunction: delete,
+                              indexToDelete: i,
+                            )
+                    ));
+                  }
+              ),
             ],
-
           );
-      }
-      ),
+        }),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
