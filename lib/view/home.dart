@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
 
 
   @override
+
   Widget build(BuildContext context) {
     changeStatusBarColor();
 
@@ -29,9 +30,12 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notes'),
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+          child: Text('Notes', style: TextStyle(fontSize: 28),),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.brown[300],
+        backgroundColor: Colors.teal,
       ),
       backgroundColor: Colors.grey[200],
 
@@ -116,7 +120,7 @@ class _HomeState extends State<Home> {
             });
           }
         },
-        backgroundColor: Colors.brown[300],
+        backgroundColor: Colors.teal,
         child: Icon(Icons.add, size: 30,),
       ),
     );
@@ -157,7 +161,7 @@ class _HomeState extends State<Home> {
 
   void changeStatusBarColor(){
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.brown[400],
+      statusBarColor: Colors.teal,
     ));
   }
 

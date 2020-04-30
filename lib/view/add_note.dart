@@ -43,8 +43,11 @@ class _AddNoteState extends State<AddNote> {
       backgroundColor: Colors.grey[200],
 
       appBar: AppBar(
-        backgroundColor: Colors.brown[300],
-        title: Text('Note'),
+        backgroundColor: Colors.teal,
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+          child: Text('Note', style: TextStyle(fontSize: 28),),
+        ),
           centerTitle: true,
           actions: <Widget>[
             Container(
@@ -83,6 +86,7 @@ class _AddNoteState extends State<AddNote> {
         child: Column(
           children: <Widget>[
             TextField(
+              autofocus: true,
               style: TextStyle(fontSize: 22, color: Colors.grey[800]),
               controller: _titleController,
               decoration: InputDecoration(
