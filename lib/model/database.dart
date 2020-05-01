@@ -3,11 +3,19 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DbProvider{
-  static Database db;
+  static Database _database;
 
   DbProvider();
 
+  Future<Database> get database async {
+    if (_database == null){
+      _database = await initDatabase();
+    }
+    return _database;
+  }
+
   Future<int> insertNote(Note note) async{
+    Database db = await database;
     return db.rawInsert("""
       INSERT INTO note(title, content) VALUES (?, ?)
       """,
@@ -15,6 +23,7 @@ class DbProvider{
   }
 
   Future<void> updateNote(Note note) async{
+    Database db = await database;
     db.rawUpdate("""
       UPDATE note 
       SET title = ?, content = ? WHERE id = ?""",
@@ -23,7 +32,8 @@ class DbProvider{
 
 
   Future<List<Note>> getAllNotes() async {
-    List<Map> result = await db.query('note');
+    Database db = await database;
+    List<Map> result = await db.rawQuery("SELECT * FROM note");
 
     return result.map((note) => Note(
       title: note['title'],
@@ -33,6 +43,8 @@ class DbProvider{
   }
 
   Future<void> deleteNote(Note note) async {
+    Database db = await database;
+
     db.rawDelete("""
       DELETE FROM note 
       WHERE id = ${note.id} 
@@ -40,9 +52,11 @@ class DbProvider{
   }
 
   initDatabase() async {
-    db = await openDatabase(
+    return await openDatabase(
       join(await getDatabasesPath(), 'note_db.db'),
+
       version: 1,
+
       onCreate: (db, version) async {
        await db.execute("""
         CREATE TABLE note (
