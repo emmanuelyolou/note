@@ -23,24 +23,29 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     changeStatusBarColor();
 
-    if (data.isEmpty){
+    if (notes == null){
       data = ModalRoute.of(context).settings.arguments;
       notes = data["notes"];
     }
 
     return Scaffold(
+      backgroundColor: Colors.grey[200],
+
       appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+
         title: Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
           child: Text('Notes', style: TextStyle(fontSize: 28),),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
+
       ),
-      backgroundColor: Colors.grey[200],
+
 
       body: ListView.separated(
         itemCount: notes.length,
+
         separatorBuilder: (context,i) =>Divider(height: 0.5,),
 
         itemBuilder: (context, i) {
@@ -53,34 +58,37 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.fromLTRB(2, 5, 35, 5),
               color: Colors.grey[100],
               height: 102,
+
               child: GestureDetector(
 
-                //handles navigation to the add_note screen and
-                //update in the db and the notes list
                 onTap: () => modifyNote(i),
 
                 child: ListTile(
+
                   title: Text(
                     notes[i].title,
+                    maxLines: 1,
+
                     style: TextStyle(
                         fontSize: 17,
                         color: Colors.grey[800],
                         fontWeight: FontWeight.bold),
-                    maxLines: 1,
                   ),
 
                   subtitle: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+
                     child: Text(
                       notes[i].content,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      softWrap: false,
+
                       style: TextStyle(
                           fontSize: 15,
                           color: Colors.grey[600]),
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -92,23 +100,28 @@ class _HomeState extends State<Home> {
                   icon: Icons.delete,
 
                   onTap: () {
-                    //instead of simply using showDialog, for the beauty
                     Navigator.of(context).push(PageRouteBuilder(
                       opaque: false,
-                        barrierColor: Colors.black.withOpacity(0.1),
-                        pageBuilder: (context, _, ___) =>
-                            DeleteConfirmationDialog(
-                              deleteFunction: delete,
-                              indexToDelete: i,
-                            )
+                      barrierColor: Colors.black.withOpacity(0.1),
+
+                      pageBuilder: (context, _, ___) => DeleteConfirmationDialog(
+                          deleteFunction: delete,
+                          indexToDelete: i,
+                        )
+
                     ));
                   }
+
               ),
             ],
           );
         }),
 
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.teal,
+
+        child: Icon(Icons.add, size: 30,),
+
         onPressed: () async{
           dynamic result = await Navigator.pushNamed(context, '/add_note');
 
@@ -120,14 +133,15 @@ class _HomeState extends State<Home> {
             });
           }
         },
-        backgroundColor: Colors.teal,
-        child: Icon(Icons.add, size: 30,),
       ),
     );
   }
 
 
   void modifyNote(index) async {
+    //handles navigation to the add_note screen and
+    //update in the db and the notes list
+
     changeStatusBarColor();
 
     dynamic response = await Navigator.pushNamed(
@@ -137,17 +151,11 @@ class _HomeState extends State<Home> {
     });
 
     if (response != null) {
-      //will search in the db for a note with the given id
-      //and then update it with the response attributes
-      int id = notes[index].id;
-      response.id = id;
-      await dbProvider.updateNote(response);
 
-      setState(() {
-        //We assign each value instead of replacing the note
-        //so we don't loose the id
-        notes[index] = response;
-      });
+      response.id = notes[index].id;
+      await dbProvider.updateNote(response); //The update is made using the id
+
+      setState(() => notes[index] = response);
     }
   }
 
