@@ -9,3 +9,4 @@ void main() => runApp(MaterialApp(debugShowCheckedModeBanner: false,
         '/home': (context) => Home(),
         '/add_note': (context) => AddNote()},
     ));
+

@@ -9,29 +9,31 @@ class DeleteConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-              content: Text(
-                'Voulez-vous supprimer cette note ?',
-                style: TextStyle(fontSize: 24),
-              ),
+      elevation: 10,
 
-              actions: <Widget>[
-                FlatButton(
+      content: Text(
+        'Voulez-vous supprimer cette note ?',
+        style: TextStyle(fontSize: 24),
+      ),
 
-                  child: Text('Annuler', style: TextStyle(fontSize: 20,)),
+      actions: <Widget>[
+        FlatButton(
 
-                  onPressed: () =>Navigator.pop(context),
+          child: Text('Annuler', style: TextStyle(fontSize: 20,)),
 
-                ),
+          onPressed: () =>Navigator.pop(context),
 
-                FlatButton(
+        ),
 
-                  child: Text('Supprimer', style:TextStyle(fontSize: 20)),
+        FlatButton(
 
-                  onPressed: () => deleteFunction(indexToDelete),
+          child: Text('Supprimer', style:TextStyle(fontSize: 20)),
 
-                )
+          onPressed: () => deleteFunction(indexToDelete),
 
-              ],
-            );
+        )
+
+      ],
+    );
   }
 }

@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
       body: ListView.separated(
         itemCount: notes.length,
 
-        separatorBuilder: (context,i) =>Divider(height: 0.5,),
+        separatorBuilder: (context, i) =>Divider(height: 0.5,),
 
         itemBuilder: (context, i) {
           return Slidable(
